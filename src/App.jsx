@@ -16,35 +16,50 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    console.log("componentDidMount <App />");
+    console.log('componentDidMount <App />');
     this.socket.onopen = () => {
       console.log('Connected to server');
     };
+
+    //received data from server
     this.socket.onmessage = ({ data }) => {
       const parsed = JSON.parse(data);
       console.log('clinet received message', parsed);
-      const messages = this.state.messages.concat(parsed);
-      this.setState({messages});
+
+      switch(parsed.typeGeneral) {
+        case 'incomingMessage':
+          // handle incoming message
+          const messages = this.state.messages.concat(parsed);
+          this.setState({messages});
+          break;
+
+        case 'incomingNotification':
+          // handle incoming notification
+          
+
+
+          break;
+
+        default:
+          // show an error in the console if the message type is unknown
+          throw new Error('Unknown event type ' + parsed.typeGeneral);
+      }
     };
-    setTimeout(() => {
-      console.log("Simulating incoming message");
-      // Add a new message to the list of messages in the data store
-      const newMessage = {id: 3, username: 'Michelle', content: 'Hello there!'};
-      const messages = this.state.messages.concat(newMessage)
-      // Update the state of the app component.
-      // Calling setState will trigger a call to render() in App and all child components.
-      this.setState({messages: messages})
-    }, 3000);
   }
 
   addMessage(newMessageString){
     //send the message to from this client to the server
-    const newMessage = {username: this.state.currentUser.name, content: newMessageString};
+    const newMessage = {type: 'postMessage', username: this.state.currentUser.name, content: newMessageString};
+    console.log(JSON.stringify(newMessage));
     this.socket.send(JSON.stringify(newMessage));
   }
 
   changeUser(newUser){
-    this.setState({currentUser: {name: newUser}});
+    const user = {currentUser: {name: newUser}};
+    const notify = {type: 'postNotification', username: user.currentUser.name};
+    console.log(JSON.stringify(notify));
+    this.socket.send(JSON.stringify(notify));
+    this.setState(user);
   }
 
   render() {

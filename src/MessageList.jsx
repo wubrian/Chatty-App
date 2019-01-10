@@ -4,21 +4,23 @@ import Notification from './Notification.jsx';
 
 class MessageList extends Component {
     render() {
-      const messages = this.props.messages.map((message, id) => (
-        <div className="message" key={id}>
-          <div className="message-username">
-          {message.username} 
-          </div>
-          <div className="message-content">
-          {message.content}
-          </div>
-        </div>
-      ));
+      // const messages = this.props.messages.map((message, id) => (
+      //   <div className="message" key={id}>
+      //     <div className="message-username">
+      //     {message.username} 
+      //     </div>
+      //     <div className="message-content">
+      //     {message.content}
+      //     </div>
+      //   </div>
+      // ));
       return (
-        <main className="messages">
-          {messages}
-      </main>
-      );
+        <div>
+          {
+            this.props.messages.map((message)=> <Message message={message}/>)
+          }
+        </div>
+      )
     }
   }
 
