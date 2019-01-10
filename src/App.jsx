@@ -8,27 +8,23 @@ export default class App extends Component {
     super(props);
     this.socket = new WebSocket('ws://localhost:3001');
     this.state = {
-      currentUser: {name: 'Bob'}, // optional. if currentUser is not defined, it means the user is Anonymous
-      messages: [
-        {
-          id: 1,
-          username: 'Bob',
-          content: 'Has anyone seen my marbles?',
-        },
-        {
-          id:2,
-          username: 'Anonymous',
-          content: 'No, I think you lost them. You lost your marbles Bob. You lost them for good.'
-        }
-      ]
+      currentUser: {name: 'Bob'}, //name coming from the input field will be updated
+      messages: [] // messages coming from the server will be stored here as they arrive
     };
     this.addMessage = this.addMessage.bind(this);
+    this.changeUser = this.changeUser.bind(this);
   }
 
   componentDidMount() {
     console.log("componentDidMount <App />");
     this.socket.onopen = () => {
       console.log('Connected to server');
+    };
+    this.socket.onmessage = ({ data }) => {
+      const parsed = JSON.parse(data);
+      console.log('clinet received message', parsed);
+      const messages = this.state.messages.concat(parsed);
+      this.setState({messages});
     };
     setTimeout(() => {
       console.log("Simulating incoming message");
@@ -41,10 +37,14 @@ export default class App extends Component {
     }, 3000);
   }
 
-  addMessage(newMessage){
-    const messages = this.state.messages.concat(newMessage);
-    this.setState({messages: messages});
+  addMessage(newMessageString){
+    //send the message to from this client to the server
+    const newMessage = {username: this.state.currentUser.name, content: newMessageString};
     this.socket.send(JSON.stringify(newMessage));
+  }
+
+  changeUser(newUser){
+    this.setState({currentUser: {name: newUser}});
   }
 
   render() {
@@ -53,7 +53,7 @@ export default class App extends Component {
         <nav className="navbar">
         <a href="/" className="navbar-brand">Chatty</a>
         </nav>
-        <ChatBar addMessage={this.addMessage} chatdetail={this.state}/>
+        <ChatBar changeUser= {this.changeUser} addMessage={this.addMessage} currentUser={this.state.currentUser}/>
         <MessageList messages={this.state.messages}/>
       </div>
     );

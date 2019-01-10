@@ -4,8 +4,8 @@ import Notification from './Notification.jsx';
 
 class MessageList extends Component {
     render() {
-      const messages = this.props.messages.map((message) => (
-        <div className="message" key={message.id}>
+      const messages = this.props.messages.map((message, id) => (
+        <div className="message" key={id}>
           <div className="message-username">
           {message.username} 
           </div>
