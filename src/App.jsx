@@ -73,7 +73,7 @@ export default class App extends Component {
       <div className="APP">
         <nav className="navbar">
         <a href="/" className="navbar-brand">Chatty</a>
-        <h3 style={{textAlign:'right'}}>{this.state.numUser}users online</h3>
+        <h3 style={{textAlign:'right'}}>{this.state.numUser} users online</h3>
         </nav>
         <ChatBar changeUser= {this.changeUser} addMessage={this.addMessage} currentUser={this.state.currentUser}/>
         <MessageList messages={this.state.messages} user= {this.state.currentUser}/>
@@ -81,4 +81,3 @@ export default class App extends Component {
     );
   }
 }
-
