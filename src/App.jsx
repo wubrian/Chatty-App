@@ -8,6 +8,7 @@ export default class App extends Component {
     super(props);
     this.socket = new WebSocket('ws://localhost:3001');
     this.state = {
+      numUser: 0,
       currentUser: {name: 'Bob'}, //name coming from the input field will be updated
       messages: [] // messages coming from the server will be stored here as they arrive
     };
@@ -26,7 +27,14 @@ export default class App extends Component {
       const parsed = JSON.parse(data);
       console.log('clinet received message', parsed);
 
+      console.log(parsed);
+
       switch(parsed.typeGeneral) {
+        case 'counter':
+          //handle number of users online
+          this.setState({numUser: parsed.num});
+          break;
+
         case 'incomingMessage':
           // handle incoming message
           const messages = this.state.messages.concat(parsed);
@@ -65,6 +73,7 @@ export default class App extends Component {
       <div className="APP">
         <nav className="navbar">
         <a href="/" className="navbar-brand">Chatty</a>
+        <h3 style={{textAlign:'right'}}>{this.state.numUser}users online</h3>
         </nav>
         <ChatBar changeUser= {this.changeUser} addMessage={this.addMessage} currentUser={this.state.currentUser}/>
         <MessageList messages={this.state.messages} user= {this.state.currentUser}/>
