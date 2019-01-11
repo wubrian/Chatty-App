@@ -34,10 +34,9 @@ export default class App extends Component {
           break;
 
         case 'incomingNotification':
-          // handle incoming notification
-          
-
-
+          // handle incoming notification by changeUser method
+          const msgs = this.state.messages.concat(parsed);
+          this.setState({messages: msgs});
           break;
 
         default:
@@ -55,11 +54,10 @@ export default class App extends Component {
   }
 
   changeUser(newUser){
-    const user = {currentUser: {name: newUser}};
-    const notify = {type: 'postNotification', username: user.currentUser.name};
+    const notify = {type: 'postNotification', newUser: newUser, username: this.state.currentUser};
     console.log(JSON.stringify(notify));
     this.socket.send(JSON.stringify(notify));
-    this.setState(user);
+    this.setState({currentUser: {name: newUser}});
   }
 
   render() {
@@ -69,7 +67,7 @@ export default class App extends Component {
         <a href="/" className="navbar-brand">Chatty</a>
         </nav>
         <ChatBar changeUser= {this.changeUser} addMessage={this.addMessage} currentUser={this.state.currentUser}/>
-        <MessageList messages={this.state.messages}/>
+        <MessageList messages={this.state.messages} user= {this.state.currentUser}/>
       </div>
     );
   }

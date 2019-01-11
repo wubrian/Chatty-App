@@ -23,8 +23,7 @@ wss.on('connection', (ws) => {
   console.log('Client connected');
   ws.on('message', (msg) => {
     //broadcast the received msg from one client to every clients
-
-      const {username, content, type} = JSON.parse(msg);
+      const {username, content, type, newUser} = JSON.parse(msg);
       const id = uuidv4();
       let typeGeneral;
 
@@ -44,7 +43,7 @@ wss.on('connection', (ws) => {
           // handle incoming notification
           console.log('notfi', username);
           typeGeneral = 'incomingNotification';
-          const resN = JSON.stringify({ typeGeneral, username})
+          const resN = JSON.stringify({ typeGeneral, username, newUser})
           wss.clients.forEach((client) => {
             client.send(resN);
           })
